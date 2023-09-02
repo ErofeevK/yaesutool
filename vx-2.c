@@ -166,7 +166,7 @@ typedef struct {
 //
 static void vx2_print_version(FILE *out)
 {
-    // Nothing to print.
+    UNUSED(out); // Nothing to print.
 }
 
 //
@@ -174,7 +174,7 @@ static void vx2_print_version(FILE *out)
 // When start==0, return non-zero on success or 0 when empty.
 // When start!=0, halt the program on any error.
 //
-static int read_block(int fd, int start, unsigned char *data, int datalen)
+static int read_block(SERIALPORTDESC fd, int start, unsigned char *data, int datalen)
 {
     unsigned char reply;
     int len, nbytes;
@@ -231,7 +231,7 @@ again:
 // Halt the program on any error.
 // Return 0 on error.
 //
-static int write_block(int fd, int start, const unsigned char *data, int datalen)
+static int write_block(SERIALPORTDESC fd, int start, const unsigned char *data, int datalen)
 {
     unsigned char reply[64];
     int len, nbytes;
@@ -368,7 +368,9 @@ again:
     fflush(stderr);
     serial_flush(radio_port);
     if (! fgets(buf, sizeof(buf), stdin))
+    {
 	/*ignore*/;
+    }
     fprintf(stderr, "Sending data... ");
     serial_flush(radio_port);
     fflush(stderr);
@@ -423,7 +425,7 @@ static int iround(double x)
 //
 static int encode_tone(char *str)
 {
-    unsigned val;
+    int val;
 
     // CTCSS tone
     float hz;
@@ -450,10 +452,10 @@ static int encode_tone(char *str)
 //
 static int encode_dcs(char *str)
 {
-    unsigned val;
+    int val;
 
     // DCS tone
-    if (sscanf(++str, "%u", &val) != 1)
+    if (sscanf(++str, "%d", &val) != 1)
         return -1;
 
     // Find a valid index in DCS table.
@@ -1199,7 +1201,7 @@ static void vx2_parse_parameter(char *param, char *value)
         return;
     }
     if (strcasecmp("Virtual Jumpers", param) == 0) {
-        int a, b, c, d;
+        unsigned a, b, c, d;
         if (sscanf(value, "%x %x %x %x", &a, &b, &c, &d) != 4) {
             fprintf(stderr, "Wrong value: %s = %s\n", param, value);
             return;
@@ -1323,6 +1325,7 @@ badtx:      fprintf(stderr, "Bad transmit frequency.\n");
 //
 static int parse_home(int first_row, char *line)
 {
+    UNUSED(first_row);
     char band_str[256], rxfreq_str[256], offset_str[256], rq_str[256];
     char tq_str[256], power_str[256], mod_str[256], step_str[256];
     int band, tmode, tone, dcs, power, amfm, step;
@@ -1416,6 +1419,7 @@ badtx:      fprintf(stderr, "Bad transmit frequency.\n");
 //
 static int parse_vfo(int first_row, char *line)
 {
+    UNUSED(first_row);
     char band_str[256], rxfreq_str[256], offset_str[256], rq_str[256];
     char tq_str[256], power_str[256], mod_str[256], step_str[256];
     int band, tmode, tone, dcs, power, amfm, step;

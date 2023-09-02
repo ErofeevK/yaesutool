@@ -35,6 +35,12 @@ const char version[] = VERSION;
 const char *copyright;
 int serial_verbose;
 
+#ifdef MINGW32
+#define APIEXT __declspec(dllimport)
+#else
+#define APIEXT
+#endif
+
 extern char *optarg;
 extern int optind;
 

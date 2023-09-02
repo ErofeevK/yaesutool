@@ -30,12 +30,6 @@
 #include <string.h>
 #include <unistd.h>
 #include <fcntl.h>
-#ifdef MINGW32
-#   include <windows.h>
-#else
-#   include <termios.h>
-#   include <sys/stat.h>
-#endif
 #include "util.h"
 
 #ifdef MINGW32
@@ -43,6 +37,7 @@ static DCB saved_mode;                  // Mode of serial port, Windows
 #else
 static struct termios oldtio, newtio;   // Mode of serial port, Unix
 #endif
+
 
 //
 // CTCSS tones, Hz*10.
@@ -107,7 +102,7 @@ void print_hex(const unsigned char *data, int len)
 //
 // Open the serial port.
 //
-int serial_open(const char *portname, int baud)
+SERIALPORTDESC serial_open(const char *portname, int baud)
 {
 #ifdef MINGW32
     HANDLE fd;
@@ -159,7 +154,7 @@ int serial_open(const char *portname, int baud)
 
     // Flush received data pending on the port.
     PurgeComm(fd, PURGE_RXCLEAR);
-    return (int) fd;
+    return fd;
 #else
     int fd;
     unsigned baud_rate = (baud == 19200) ? B19200 : B9600;
@@ -213,10 +208,10 @@ int serial_open(const char *portname, int baud)
 //
 // Purge all received data.
 //
-void serial_flush(int fd)
+void serial_flush(SERIALPORTDESC fd)
 {
 #ifdef MINGW32
-    PurgeComm((HANDLE) fd, PURGE_RXCLEAR);
+    PurgeComm(fd, PURGE_RXCLEAR);
 #else
     tcflush(fd, TCIFLUSH);
 #endif
@@ -225,12 +220,12 @@ void serial_flush(int fd)
 //
 // Close the serial port.
 //
-void serial_close(int fd)
+void serial_close(SERIALPORTDESC fd)
 {
     // Restore the port mode.
 #ifdef MINGW32
-    SetCommState((HANDLE) fd, &saved_mode);
-    CloseHandle((HANDLE) fd);
+    SetCommState(fd, &saved_mode);
+    CloseHandle(fd);
 #else
     tcsetattr(fd, TCSANOW, &oldtio);
     close(fd);
@@ -242,14 +237,14 @@ void serial_close(int fd)
 // Return 0 when no data available.
 // Use 200-msec timeout.
 //
-int serial_read(int fd, unsigned char *data, int len)
+int serial_read(SERIALPORTDESC fd, unsigned char *data, int len)
 {
 #ifdef MINGW32
     DWORD nbytes;
     int len0 = len;
 
     for (;;) {
-        if (! ReadFile((HANDLE)fd, data, len, &nbytes, 0) || nbytes <= 0)
+        if (! ReadFile(fd, data, len, &nbytes, 0) || nbytes <= 0)
             return 0;
 
         len -= nbytes;
@@ -295,12 +290,12 @@ int serial_read(int fd, unsigned char *data, int len)
 //
 // Write data to serial port.
 //
-void serial_write(int fd, const void *data, int len)
+void serial_write(SERIALPORTDESC fd, const void *data, int len)
 {
 #ifdef MINGW32
     DWORD count;
 
-    WriteFile((HANDLE)fd, data, len, &count, 0);
+    WriteFile(fd, data, len, &count, 0);
 #else
     if (write(fd, data, len) != len) {
         perror("Serial port");

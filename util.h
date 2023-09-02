@@ -26,6 +26,8 @@
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "serialport.h"
+
 //
 // Localization.
 //
@@ -38,6 +40,7 @@
 #define bindtextdomain(x,y) /* empty */
 #define textdomain(x)       /* empty */
 #endif
+#define UNUSED(x) (void)(x)
 
 //
 // Program version.
@@ -72,29 +75,29 @@ void print_hex(const unsigned char *data, int len);
 //
 // Open the serial port.
 //
-int serial_open(const char *portname, int baud);
+SERIALPORTDESC serial_open(const char *portname, int baud);
 
 //
 // Close the serial port.
 //
-void serial_close(int fd);
+void serial_close(SERIALPORTDESC fd);
 
 //
 // Purge all received data.
 //
-void serial_flush(int fd);
+void serial_flush(SERIALPORTDESC fd);
 
 //
 // Read data from serial port.
 // Return 0 when no data available.
 // Use 200-msec timeout.
 //
-int serial_read(int fd, unsigned char *data, int len);
+int serial_read(SERIALPORTDESC fd, unsigned char *data, int len);
 
 //
 // Write data to serial port.
 //
-void serial_write(int fd, const void *data, int len);
+void serial_write(SERIALPORTDESC fd, const void *data, int len);
 
 //
 // Delay in milliseconds.

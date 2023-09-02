@@ -25,6 +25,7 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+#include "serialport.h"
 
 //
 // Connect to the radio via the serial port.
@@ -106,7 +107,7 @@ extern unsigned char radio_ident[8];
 //
 // File descriptor of serial port with programming cable attached.
 //
-extern int radio_port;
+extern SERIALPORTDESC radio_port;
 
 //
 // Read/write progress counter.
