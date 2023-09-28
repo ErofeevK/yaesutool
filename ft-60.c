@@ -748,7 +748,7 @@ static void setup_channel(int i, char *name, double rx_mhz, double tx_mhz,
 {
     memory_channel_t *ch = i + (memory_channel_t*) &radio_mem[OFFSET_CHANNELS];
 
-    hz_to_freq((int) (rx_mhz * 1000000.0), ch->rxfreq);
+    hz_to_freq(rx_mhz * 1000000 + 0.5, ch->rxfreq);
 
     double offset_mhz = tx_mhz - rx_mhz;
     ch->offset = 0;
@@ -763,7 +763,7 @@ static void setup_channel(int i, char *name, double rx_mhz, double tx_mhz,
         ch->offset = (int) (-offset_mhz / 0.05 + 0.5);
     } else {
         ch->duplex = D_CROSS_BAND;
-        hz_to_freq((int) (tx_mhz * 1000000.0), ch->txfreq);
+        hz_to_freq((int) (0.5 + tx_mhz * 1000000.0), ch->txfreq);
     }
     ch->used = (rx_mhz > 0);
     ch->tmode = tmode;
@@ -809,7 +809,7 @@ static void setup_home(int band, double rx_mhz, double tx_mhz,
     case 430: ch += 3; break;
     case 850: ch += 4; break;
     }
-    hz_to_freq((int) (rx_mhz * 1000000.0), ch->rxfreq);
+    hz_to_freq(rx_mhz * 1000000 + 0.5, ch->rxfreq);
 
     double offset_mhz = tx_mhz - rx_mhz;
     ch->offset = 0;
@@ -824,7 +824,7 @@ static void setup_home(int band, double rx_mhz, double tx_mhz,
         ch->offset = (int) (-offset_mhz / 0.05 + 0.5);
     } else {
         ch->duplex = D_CROSS_BAND;
-        hz_to_freq((int) (tx_mhz * 1000000.0), ch->txfreq);
+        hz_to_freq((int) (0.5 + tx_mhz * 1000000.0), ch->txfreq);
     }
     ch->used = (rx_mhz > 0);
     ch->tmode = tmode;
@@ -858,9 +858,9 @@ static void setup_pms(int i, double lower_mhz, double upper_mhz)
         ch[1].used = 0;
         return;
     }
-    hz_to_freq((int) (lower_mhz * 1000000.0), ch[0].rxfreq);
+    hz_to_freq((int) (0.5 + lower_mhz * 1000000.0), ch[0].rxfreq);
     ch[0].used = 1;
-    hz_to_freq((int) (upper_mhz * 1000000.0), ch[1].rxfreq);
+    hz_to_freq((int) (0.5 + upper_mhz * 1000000.0), ch[1].rxfreq);
     ch[1].used = 1;
 }
 
