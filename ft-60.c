@@ -543,8 +543,12 @@ static void decode_name(int i, char *name)
 {
     memory_name_t *nm = i + (memory_name_t*) &radio_mem[OFFSET_NAMES];
 
-    if (nm->valid && nm->used) {
+    if (nm->valid) {
         int n, c;
+	if (!nm->used){
+	    name[0]='"';
+	    name++;
+	}
         for (n=0; n<6; n++) {
             c = nm->name[n];
             name[n] = (c < NCHARS) ? CHARSET[c] : ' ';
@@ -588,10 +592,14 @@ static void encode_name(int i, char *name)
     memory_name_t *nm = i + (memory_name_t*) &radio_mem[OFFSET_NAMES];
     int n;
 
-    if (name && *name && *name != '-') {
+    if (name && *name) {
         // Setup channel name.
         nm->valid = 1;
         nm->used = 1;
+	if (*name == '"') {
+	    name++;
+            nm->used = 0;
+	}
         for (n=0; n<6 && name[n]; n++) {
             nm->name[n] = encode_char(name[n]);
         }
