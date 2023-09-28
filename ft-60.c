@@ -325,6 +325,48 @@ error:  fprintf(stderr, "\nPlease, repeat the procedure:\n");
         goto error;
 }
 
+#if 1
+//
+// Return the default step for a given frequency.
+//
+static int default_step(double mhz)
+{
+    static const struct {
+        double fmin, fmax;
+        int step;
+    } tab [] = {
+        { 108.000, 137.000, STEP_25   },
+        { 137.000, 144.000, STEP_12_5 },
+        { 144.000, 148.000, STEP_5    },
+        { 148.000, 156.000, STEP_12_5 },
+        { 156.000, 157.450, STEP_25   },
+        { 157.450, 160.600, STEP_12_5 },
+        { 160.600, 160.975, STEP_25   },
+        { 160.975, 161.500, STEP_12_5 },
+        { 161.500, 162.900, STEP_25   },
+        { 162.900, 174.000, STEP_12_5 },
+        { 174.000, 222.000, STEP_50   },
+        { 222.000, 225.000, STEP_5    },
+        { 225.000, 300.000, STEP_12_5 },
+        { 300.000, 336.000, STEP_100  },
+        { 336.000, 420.000, STEP_12_5 },
+        { 420.000, 450.000, STEP_25   },
+        { 450.000, 470.000, STEP_12_5 },
+        { 470.000, 520.000, STEP_50   },
+        { 700.000, 800.000, STEP_50   },
+        { 800.000, 999.990, STEP_12_5 },
+        { -1, -1,  STEP_5},
+    };
+    int i;
+
+    for (i=0; tab[i].fmin>0; i++) {
+        if (mhz >= tab[i].fmin && mhz < tab[i].fmax)
+            return tab[i].step;
+    }
+    return STEP_5;
+}
+#endif
+//
 //
 // Check whether the memory image is compatible with this device.
 //
@@ -702,7 +744,7 @@ static void decode_channel(int i, int seek, char *name,
 // Set the parameters for a given memory channel.
 //
 static void setup_channel(int i, char *name, double rx_mhz, double tx_mhz,
-    int tmode, int tone, int dtcs, int power, int wide, int scan, int isam)
+    int tmode, int tone, int dtcs, int power, int wide, int scan, int isam, int step)
 {
     memory_channel_t *ch = i + (memory_channel_t*) &radio_mem[OFFSET_CHANNELS];
 
@@ -730,7 +772,11 @@ static void setup_channel(int i, char *name, double rx_mhz, double tx_mhz,
     ch->power = power;
     ch->isnarrow = ! wide;
     ch->isam = isam;
-    ch->step = (rx_mhz >= 400) ? STEP_12_5 : STEP_5;
+    if (step > 0)
+	ch->step = step;
+    else
+	ch->step = default_step(rx_mhz);
+    //ch->step = (rx_mhz >= 400) ? STEP_12_5 : STEP_5;
     ch->_u1 = 0;
     ch->_u2_1 = ch->_u2_2 = 0;//(rx_mhz >= 400);
     ch->_u3 = 0;
@@ -752,7 +798,7 @@ static void setup_channel(int i, char *name, double rx_mhz, double tx_mhz,
 // Band selects the channel: 144, 250, 350, 430 or 850.
 //
 static void setup_home(int band, double rx_mhz, double tx_mhz,
-    int tmode, int tone, int dtcs, int power, int wide, int isam)
+    int tmode, int tone, int dtcs, int power, int wide, int isam, int step)
 {
     memory_channel_t *ch = (memory_channel_t*) &radio_mem[OFFSET_HOME];
 
@@ -787,7 +833,11 @@ static void setup_home(int band, double rx_mhz, double tx_mhz,
     ch->power = power;
     ch->isnarrow = ! wide;
     ch->isam = isam;
-    ch->step = (rx_mhz >= 400) ? STEP_12_5 : STEP_5;
+    if (step > 0)
+	ch->step = step;
+    else
+	ch->step = default_step(rx_mhz);
+    //ch->step = (rx_mhz >= 400) ? STEP_12_5 : STEP_5;
     ch->_u1 = 0;
     ch->_u2_1 = ch->_u2_2 = 0; //(rx_mhz >= 400);
     ch->_u3 = 0;
@@ -874,6 +924,7 @@ static void ft60_print_config(FILE *out, int verbose)
         fprintf(out, "# 7) Transmit power: High, Mid, Low\n");
         fprintf(out, "# 8) Modulation: Wide, Narrow, AM\n");
         fprintf(out, "# 9) Scan mode: +, -, Only\n");
+        fprintf(out, "# 10) Step: 5 10 12.5, 15, 20 25, 50, 100 or leave empty to autoselect based on bandplan\n");
         fprintf(out, "#\n");
     }
     fprintf(out, "Channel Name    Receive  Transmit R-Squel T-Squel Power Modulation Scan Step\n");
@@ -935,6 +986,7 @@ static void ft60_print_config(FILE *out, int verbose)
         fprintf(out, "# 5) Squelch tone for transmit, or '-' to disable\n");
         fprintf(out, "# 6) Transmit power: High, Mid, Low\n");
         fprintf(out, "# 7) Modulation: Wide, Narrow, AM\n");
+        fprintf(out, "# 8) Step: 5 10 12.5, 15, 20 25, 50, 100 or leave empty to autoselect based on bandplan\n");
         fprintf(out, "#\n");
     }
     fprintf(out, "Home    Receive  Transmit R-Squel T-Squel Power Modulation Step\n");
@@ -1069,47 +1121,6 @@ static int is_valid_frequency(int mhz)
     return 0;
 }
 
-#if 0
-//
-// Return the default step for a given frequency.
-//
-static int default_step(double mhz)
-{
-    static const struct {
-        double min, max;
-        int step;
-    } tab [] = {
-        { 108.000, 137.000, STEP_25   },
-        { 137.000, 144.000, STEP_12_5 },
-        { 144.000, 148.000, STEP_5    },
-        { 148.000, 156.000, STEP_12_5 },
-        { 156.000, 157.450, STEP_25   },
-        { 157.450, 160.600, STEP_12_5 },
-        { 160.600, 160.975, STEP_25   },
-        { 160.975, 161.500, STEP_12_5 },
-        { 161.500, 162.900, STEP_25   },
-        { 162.900, 174.000, STEP_12_5 },
-        { 174.000, 222.000, STEP_50   },
-        { 222.000, 225.000, STEP_5    },
-        { 225.000, 300.000, STEP_12_5 },
-        { 300.000, 336.000, STEP_100  },
-        { 336.000, 420.000, STEP_12_5 },
-        { 420.000, 450.000, STEP_25   },
-        { 450.000, 470.000, STEP_12_5 },
-        { 470.000, 520.000, STEP_50   },
-        { 700.000, 800.000, STEP_50   },
-        { 800.000, 999.990, STEP_12_5 },
-        { -1 },
-    };
-    int i;
-
-    for (i=0; tab[i].min>0; i++) {
-        if (mhz >= tab[i].min && mhz < tab[i].max)
-            return tab[i].step;
-    }
-    return STEP_5;
-}
-#endif
 
 //
 // Parse one line of memory channel table.
@@ -1192,12 +1203,14 @@ badtx:  fprintf(stderr, "Bad transmit frequency.\n");
         // On first entry, erase the channel table.
         int i;
         for (i=0; i<NCHAN; i++) {
-            setup_channel(i, 0, 0, 0, 0, TONE_DEFAULT, 0, 0, 1, 0, 0);
+            memory_channel_t *ch = i + (memory_channel_t*) &radio_mem[OFFSET_CHANNELS];
+            ch->txfreq[0] = ch->txfreq[1] = ch->txfreq[2] = 0;
+            //setup_channel(i, 0, 0, 0, 0, TONE_DEFAULT, 0, 0, 1, 0, 0);
         }
     }
 
     setup_channel(num-1, name_str, rx_mhz, tx_mhz,
-        tmode, tone, dtcs, power, wide, scan, isam);
+        tmode, tone, dtcs, power, wide, scan, isam, -1);
     return 1;
 }
 
@@ -1267,7 +1280,7 @@ badtx:  fprintf(stderr, "Bad transmit frequency.\n");
         return 0;
     }
 
-    setup_home(band, rx_mhz, tx_mhz, tmode, tone, dtcs, power, wide, isam);
+    setup_home(band, rx_mhz, tx_mhz, tmode, tone, dtcs, power, wide, isam, -1);
     return 1;
 }
 
