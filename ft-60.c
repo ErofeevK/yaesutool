@@ -772,13 +772,16 @@ static void setup_channel(int i, char *name, double rx_mhz, double tx_mhz,
     ch->power = power;
     ch->isnarrow = ! wide;
     ch->isam = isam;
-    if (step > 0)
+
+    if (step >= 0){
 	ch->step = step;
-    else
+    }
+    else{
 	ch->step = default_step(rx_mhz);
-    //ch->step = (rx_mhz >= 400) ? STEP_12_5 : STEP_5;
+    }
+
     ch->_u1 = 0;
-    ch->_u2_1 = ch->_u2_2 = 0;//(rx_mhz >= 400);
+    ch->_u2_1 = 0; ch->_u2_2 = 0;
     ch->_u3 = 0;
     ch->_u4[0] = 15;
     ch->_u4[1] = 0;
@@ -837,9 +840,8 @@ static void setup_home(int band, double rx_mhz, double tx_mhz,
 	ch->step = step;
     else
 	ch->step = default_step(rx_mhz);
-    //ch->step = (rx_mhz >= 400) ? STEP_12_5 : STEP_5;
     ch->_u1 = 0;
-    ch->_u2_1 = ch->_u2_2 = 0; //(rx_mhz >= 400);
+    ch->_u2_1 = ch->_u2_2 = 0;
     ch->_u3 = 0;
     ch->_u4[0] = 15;
     ch->_u4[1] = 0;
@@ -1132,13 +1134,14 @@ static int parse_channel(int first_row, char *line)
     char num_str[256], name_str[256], rxfreq_str[256], offset_str[256];
     char rq_str[256], tq_str[256], power_str[256], wide_str[256];
     char scan_str[256];
-    int num, tmode, tone, dtcs, power, wide, scan, isam;
+    char step_str[256]={0};
+    int num, tmode, tone, dtcs, power, wide, scan, isam, step;
     double rx_mhz, tx_mhz;
 
     //TODO
-    if (sscanf(line, "%s %s %s %s %s %s %s %s %s",
+    if (sscanf(line, "%s %s %s %s %s %s %s %s %s %s",
         num_str, name_str, rxfreq_str, offset_str, rq_str, tq_str, power_str,
-        wide_str, scan_str) != 9)
+        wide_str, scan_str, step_str) < 9)
         return 0;
 
     num = atoi(num_str);
@@ -1208,9 +1211,22 @@ badtx:  fprintf(stderr, "Bad transmit frequency.\n");
             //setup_channel(i, 0, 0, 0, 0, TONE_DEFAULT, 0, 0, 1, 0, 0);
         }
     }
-
+    step = -1;
+    if (step_str[0] != 0 && step_str[0] != '-'){
+	unsigned i;
+	for (i=0; i < sizeof(STEP_NAME)/sizeof(STEP_NAME[0]); i++) {
+	    if (strcasecmp(STEP_NAME[i], step_str) == 0) {
+	        step = i;
+		break;
+	    }
+	}
+        if(step == -1){
+	    fprintf(stderr, "Bad step value.\n");
+	    return 0;
+	}
+    }
     setup_channel(num-1, name_str, rx_mhz, tx_mhz,
-        tmode, tone, dtcs, power, wide, scan, isam, -1);
+        tmode, tone, dtcs, power, wide, scan, isam, step);
     return 1;
 }
 
@@ -1222,14 +1238,16 @@ static int parse_home(int first_row, char *line)
 {
     char band_str[256], rxfreq_str[256], offset_str[256];
     char rq_str[256], tq_str[256], power_str[256], wide_str[256];
+    char step_str[256]={0};
+    int step;
     int band, tmode, tone, dtcs, power, wide, isam;
     double rx_mhz, tx_mhz;
     (void)first_row;
 
     //TODO
-    if (sscanf(line, "%s %s %s %s %s %s %s",
+    if (sscanf(line, "%s %s %s %s %s %s %s %s",
         band_str, rxfreq_str, offset_str, rq_str, tq_str,
-        power_str, wide_str) != 7)
+        power_str, wide_str, step_str) < 7)
         return 0;
 
     band = atoi(band_str);
@@ -1280,7 +1298,21 @@ badtx:  fprintf(stderr, "Bad transmit frequency.\n");
         return 0;
     }
 
-    setup_home(band, rx_mhz, tx_mhz, tmode, tone, dtcs, power, wide, isam, -1);
+    step = -1;
+    if (step_str[0] != 0 && step_str[0] != '-'){
+	unsigned i;
+	for (i=0; i < sizeof(STEP_NAME)/sizeof(STEP_NAME[0]); i++) {
+	    if (strcasecmp(STEP_NAME[i], step_str) == 0) {
+	        step = i;
+		break;
+	    }
+	}
+        if(step == -1){
+	    fprintf(stderr, "Bad step value.\n");
+	    return 0;
+	}
+    }
+    setup_home(band, rx_mhz, tx_mhz, tmode, tone, dtcs, power, wide, isam, step);
     return 1;
 }
 
