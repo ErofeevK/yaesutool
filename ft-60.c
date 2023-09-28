@@ -68,6 +68,8 @@ enum {
     STEP_100,
 };
 
+static const char *STEP_NAME[] = {"5", "10", "12.5", "15", "20", "25", "50", "100"};
+
 //
 // Data structure for a memory channel.
 //
@@ -91,8 +93,9 @@ typedef struct {
 #define T_D             5
 #define T_T_DCS         6
 #define T_D_TSQL        7
+                _u2_1     : 1,
                 step      : 3,  // Frequency step
-                _u2       : 2;
+                _u2_2     : 1;
     uint8_t     txfreq [3];     // Transmit frequency when cross-band
     uint8_t     tone      : 6,  // CTCSS tone select
 #define TONE_DEFAULT    12
@@ -729,7 +732,7 @@ static void setup_channel(int i, char *name, double rx_mhz, double tx_mhz,
     ch->isam = isam;
     ch->step = (rx_mhz >= 400) ? STEP_12_5 : STEP_5;
     ch->_u1 = 0;
-    ch->_u2 = (rx_mhz >= 400);
+    ch->_u2_1 = ch->_u2_2 = 0;//(rx_mhz >= 400);
     ch->_u3 = 0;
     ch->_u4[0] = 15;
     ch->_u4[1] = 0;
@@ -786,7 +789,7 @@ static void setup_home(int band, double rx_mhz, double tx_mhz,
     ch->isam = isam;
     ch->step = (rx_mhz >= 400) ? STEP_12_5 : STEP_5;
     ch->_u1 = 0;
-    ch->_u2 = (rx_mhz >= 400);
+    ch->_u2_1 = ch->_u2_2 = 0; //(rx_mhz >= 400);
     ch->_u3 = 0;
     ch->_u4[0] = 15;
     ch->_u4[1] = 0;
@@ -873,7 +876,7 @@ static void ft60_print_config(FILE *out, int verbose)
         fprintf(out, "# 9) Scan mode: +, -, Only\n");
         fprintf(out, "#\n");
     }
-    fprintf(out, "Channel Name    Receive  Transmit R-Squel T-Squel Power Modulation Scan\n");
+    fprintf(out, "Channel Name    Receive  Transmit R-Squel T-Squel Power Modulation Scan Step\n");
     for (i=0; i<NCHAN; i++) {
         int rx_hz, tx_hz, rx_ctcs, tx_ctcs, rx_dcs, tx_dcs;
         int power, wide, scan, isam, step;
@@ -893,8 +896,10 @@ static void ft60_print_config(FILE *out, int verbose)
         fprintf(out, "   ");
         print_squelch(out, tx_ctcs, tx_dcs);
 
-        fprintf(out, "   %-4s  %-10s %s\n", POWER_NAME[power],
+        fprintf(out, "   %-4s  %-10s %s", POWER_NAME[power],
             isam ? "AM" : wide ? "Wide" : "Narrow", SCAN_NAME[scan]);
+
+	fprintf(out, "    %-5s\n", STEP_NAME[step]);
     }
     if (verbose)
         print_squelch_tones(out, 1);
@@ -932,7 +937,7 @@ static void ft60_print_config(FILE *out, int verbose)
         fprintf(out, "# 7) Modulation: Wide, Narrow, AM\n");
         fprintf(out, "#\n");
     }
-    fprintf(out, "Home    Receive  Transmit R-Squel T-Squel Power Modulation\n");
+    fprintf(out, "Home    Receive  Transmit R-Squel T-Squel Power Modulation Step\n");
     for (i=0; i<5; i++) {
         int rx_hz, tx_hz, rx_ctcs, tx_ctcs, rx_dcs, tx_dcs;
         int power, wide, scan, isam, step;
@@ -947,8 +952,10 @@ static void ft60_print_config(FILE *out, int verbose)
         fprintf(out, "   ");
         print_squelch(out, tx_ctcs, tx_dcs);
 
-        fprintf(out, "   %-4s  %s\n", POWER_NAME[power],
+        fprintf(out, "   %-4s  %s", POWER_NAME[power],
             isam ? "AM" : wide ? "Wide" : "Narrow");
+
+        fprintf(out, "       %-4s\n", STEP_NAME[step]);
     }
 
     //
