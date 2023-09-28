@@ -639,12 +639,17 @@ static void encode_name(int i, char *name)
 
     if (name && *name) {
         // Setup channel name.
-        nm->valid = 1;
         nm->used = 1;
 	if (*name == '"') {
 	    name++;
             nm->used = 0;
 	}
+
+	if(!(*name))
+            return;
+
+        nm->valid = 1;
+
         for (n=0; n<6 && name[n]; n++) {
             nm->name[n] = encode_char(name[n]);
         }
@@ -654,8 +659,8 @@ static void encode_name(int i, char *name)
         // Clear name.
         nm->valid = 0;
         nm->used = 0;
-        for (n=0; n<6; n++)
-            nm->name[n] = 0xff;
+//        for (n=0; n<6; n++)
+//            nm->name[n] = 0xff;
     }
 }
 
