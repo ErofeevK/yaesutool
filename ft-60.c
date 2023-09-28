@@ -829,7 +829,7 @@ static void setup_home(int band, double rx_mhz, double tx_mhz,
         ch->duplex = D_CROSS_BAND;
         hz_to_freq((int) (0.5 + tx_mhz * 1000000.0), ch->txfreq);
     }
-    ch->used = (rx_mhz > 0);
+    ch->used = 0;//(rx_mhz > 0); //Looks like for home this is not important but from radio it is 0  
     ch->tmode = tmode;
     ch->tone = tone;
     ch->dtcs = dtcs;
@@ -1207,7 +1207,8 @@ badtx:  fprintf(stderr, "Bad transmit frequency.\n");
         int i;
         for (i=0; i<NCHAN; i++) {
             memory_channel_t *ch = i + (memory_channel_t*) &radio_mem[OFFSET_CHANNELS];
-            ch->txfreq[0] = ch->txfreq[1] = ch->txfreq[2] = 0;
+	    ch->used=0;
+            //ch->rxfreq[0] = ch->rxfreq[1] = ch->rxfreq[2] = 0;
             //setup_channel(i, 0, 0, 0, 0, TONE_DEFAULT, 0, 0, 1, 0, 0);
         }
     }
