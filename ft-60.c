@@ -53,7 +53,7 @@ static const char CHARSET[] = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ !`o$%&'()*+,
 
 static const char *BAND_NAME[5] = { "144", "250", "350", "430", "850" };
 
-static const char *POWER_NAME[] = { "High", "Med", "Low", "??" };
+static const char *POWER_NAME[] = { "High", "Mid", "Low", "??" };
 
 static const char *SCAN_NAME[] = { "+", "-", "Only", "??" };
 
