@@ -1,0 +1,79 @@
+name: C/C++ CI
+
+on: 
+  push:
+    branches:
+      - old_build
+      - main
+  workflow_call:
+
+jobs:
+  build-windows:
+
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: bash
+    steps:
+    - uses: actions/checkout@v4
+    - name: make
+      run: |
+        mkdir build && cd build
+        cmake -G Ninja -DCMAKE_BUILD_TYPE=Release -DMINGW32=1 ..
+        cmake --build . --target package
+
+    - name: Upload windows binary
+      uses: actions/upload-artifact@v4
+      with:
+        name: yaesutool-windows
+        path: build/yaesutool*.zip
+
+  build-linux:
+
+    runs-on: ubuntu-22.04
+    steps:
+    - uses: actions/checkout@v4
+    - name: make
+      run: |
+        mkdir build && cd build
+        cmake -DCMAKE_BUILD_TYPE=Release ..
+        cmake --build . --target package
+
+    - name: Upload linux binary
+      uses: actions/upload-artifact@v4
+      with:
+        name: yaesutool-linux
+        path: build/yaesutool*.tar.gz
+
+  build-linux-static:
+
+    runs-on: ubuntu-22.04
+    steps:
+    - uses: actions/checkout@v4
+    - name: make
+      run: |
+        mkdir build && cd build
+        cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_STATIC=1 ..
+        cmake --build . --target package
+
+    - name: Upload linux static binary
+      uses: actions/upload-artifact@v4
+      with:
+        name: yaesutool-linux-static
+        path: build/yaesutool*.tar.gz
+
+
+  build-changelog:
+
+    runs-on: ubuntu-22.04
+    steps:
+    - uses: actions/checkout@v4
+    - name: make
+      run: |
+        mkdir build && cd build
+
+    - name: Upload changelog
+      uses: actions/upload-artifact@v4
+      with:
+        name: changelog
+        path: CHANGELOG.md
