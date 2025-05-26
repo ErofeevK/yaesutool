@@ -121,6 +121,7 @@ typedef struct {
 //
 static void ft60_print_version(FILE *out)
 {
+    (void)out;
     // Nothing to print.
 }
 
@@ -129,7 +130,7 @@ static void ft60_print_version(FILE *out)
 // When start==0, return non-zero on success or 0 when empty.
 // When start!=0, halt the program on any error.
 //
-static int read_block(int fd, int start, unsigned char *data, int nbytes)
+static int read_block(SERIALPORTDESC fd, int start, unsigned char *data, int nbytes)
 {
     unsigned char reply;
     int len;
@@ -172,7 +173,7 @@ static int read_block(int fd, int start, unsigned char *data, int nbytes)
 // Halt the program on any error.
 // Return 0 on error.
 //
-static int write_block(int fd, int start, const unsigned char *data, int nbytes)
+static int write_block(SERIALPORTDESC fd, int start, const unsigned char *data, int nbytes)
 {
     unsigned char reply[64];
     int len;
@@ -294,7 +295,7 @@ again:
     fflush(stderr);
     serial_flush(radio_port);
     if (! fgets(buf, sizeof(buf), stdin))
-	/*ignore*/;
+	{/*ignore*/};
     fprintf(stderr, "Sending data... ");
     fflush(stderr);
 
@@ -336,7 +337,7 @@ static int ft60_is_compatible()
 //
 static int encode_tone(char *str)
 {
-    unsigned val;
+    int val;
 
     // CTCSS tone
     float hz;
@@ -363,10 +364,10 @@ static int encode_tone(char *str)
 //
 static int encode_dcs(char *str)
 {
-    unsigned val;
+    int val;
 
     // DCS tone
-    if (sscanf(++str, "%u", &val) != 1)
+    if (sscanf(++str, "%d", &val) != 1)
         return -1;
 
     // Find a valid index in DCS table.
@@ -1195,6 +1196,7 @@ static int parse_home(int first_row, char *line)
     char rq_str[256], tq_str[256], power_str[256], wide_str[256];
     int band, tmode, tone, dtcs, power, wide, isam;
     double rx_mhz, tx_mhz;
+    (void)first_row;
 
     //TODO
     if (sscanf(line, "%s %s %s %s %s %s %s",

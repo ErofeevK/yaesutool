@@ -1,9 +1,11 @@
 CC		= gcc
 
-CFLAGS		= -g -O -Wall -DMINGW32 -Werror
+
+VERSION         = $(shell cat version.txt)
+CFLAGS		= -g -O -Wall -DMINGW32 -Werror -DVERSION='"$(VERSION)"'
 LDFLAGS		= -s
 
-OBJS		= main.o util.o radio.o ft-60.o
+OBJS		= main.o util.o radio.o ft-60.o vx-2.o
 LIBS            =
 
 all:		yaesutool.exe
@@ -16,3 +18,4 @@ ft-60.o: ft-60.c radio.h util.h
 main.o: main.c radio.h util.h
 radio.o: radio.c radio.h util.h
 util.o: util.c util.h
+vx-2.o: vx-2.c radio.h util.h

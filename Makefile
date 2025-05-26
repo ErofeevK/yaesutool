@@ -1,6 +1,6 @@
 CC		= gcc
 
-VERSION         = 1.0
+VERSION         = $(shell cat version.txt)
 CFLAGS		= -g -O -Wall -Werror -DVERSION='"$(VERSION)"'
 LDFLAGS		=
 

@@ -35,7 +35,7 @@
 #include "radio.h"
 #include "util.h"
 
-int radio_port;                         // File descriptor of programming serial port
+SERIALPORTDESC radio_port;              // File descriptor of programming serial port
 unsigned char radio_mem [0x10000];      // Radio memory contents, up to 64kbytes
 int radio_progress;                     // Read/write progress counter
 

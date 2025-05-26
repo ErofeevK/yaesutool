@@ -1,0 +1,30 @@
+name: Release (Tag-Based)
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_call:
+
+jobs:
+  build:
+    uses: ./.github/workflows/c-cpp.yml 
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download Artifacts
+        uses: actions/download-artifact@v4
+      - name: List
+        run: |
+          ls -R .
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: yaesutool*/yaesutool*
+          tag_name: ${{ github.ref_name }}
+          body: "Automated release of ${{ github.ref_name }}."
+          body_path: changelog/CHANGELOG.md
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
