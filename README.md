@@ -95,6 +95,20 @@ To build on Windows using MINGW compiler, run:
 
     gmake -f make-mingw
 
+
+Also you can build using CMake:
+On Linux or Mac OS X:
+
+    mkdir build && cd build
+    cmake -DCMAKE_BUILD_TYPE=Release ..
+    cmake --build . --target package
+
+On Windows using MINGW:
+
+    mkdir build && cd build
+    cmake -G Ninja -DCMAKE_BUILD_TYPE=Release -DMINGW32=1 ..
+    cmake --build . --target package
+
 ___
 Regards,
 Serge Vakulenko
