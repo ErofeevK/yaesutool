@@ -3,8 +3,11 @@ name: C/C++ CI
 on: 
   push:
     branches:
-      - old_build
+      - task/*
       - main
+      - master
+  pull_request:
+    types: [opened, reopened, synchronize]
   workflow_call:
 
 jobs:

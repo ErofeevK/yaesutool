@@ -1,23 +1,23 @@
 FT-60R Configuration
 ~~~~~~~~~~~~~~~~~~~~
 
-    Item Menu Item  Function / Available values                                 Default Actual
-    ------------------------------------------------------------------------------------------
-    1    APO        Selects the Automatic Power Off time                        OFF     0.5
+    Item Menu Item  Function / Available values                                 Default Actual     Offset   Values
+    ----------------------------------------------------------------------------------------------------------------
+    1    APO        Selects the Automatic Power Off time                        OFF     0.5         0x24    0x00-0x18
                     OFF / 0.5H - 12H
-    2    AR BEP     Selects the ARTS beep mode                                  INRANG  INRANG
+    2    AR BEP     Selects the ARTS beep mode                                  INRANG  INRANG      0x2E    0x00-0x02
                     INRANG / ALWAYS / OFF
-    3    AR INT     Selects the ARTS polling interval                           25sec   25sec
+    3    AR INT     Selects the ARTS polling interval                           25sec   25sec       0x38    0x01 / 0x09
                     25sec / 15sec
-    4    ARS        Enables/disables the Automatic Repeater Shift feature       ARS.ON  ARS.ON
+    4    ARS        Enables/disables the Automatic Repeater Shift feature       ARS.ON  ARS.ON      0x39    0x10 / 0x00
                     ARS.ON / ARS.OFF
-    5    BCLO       Enables/disables the busy channel lockout feature           BCL.OFF BCL.OFF
+    5    BCLO       Enables/disables the busy channel lockout feature           BCL.OFF BCL.OFF     0x3D    0x69 / 0x49
                     BCL.ON / BCL.OFF
-    6    BEEP       Enables/disables the beeper                                 KEY+SC  KEY+SC
+    6    BEEP       Enables/disables the beeper                                 KEY+SC  KEY+SC      0x3A    0x08 / 0x29 / 0x00
                     KEY / KEY+SC / OFF
-    7    BELL       Selects the number of CTCSS/DCS bell ringer repetitions     OFF     OFF
+    7    BELL       Selects the number of CTCSS/DCS bell ringer repetitions     OFF     OFF         0x30    0x00 / 0x01 / 0x02 ... 0x05
                     OFF / 1T / 3T / 5T / 8T / CONT
-    8    BSY.LED    Enables/disables the BUSY LED while the squelch is open     LED.ON  LED.ON
+    8    BSY.LED    Enables/disables the BUSY LED while the squelch is open     LED.ON  LED.ON      0x3D    0x49 / 0x59
                     LED.ON / LED.OFF
     9    CLK.SFT    Shifting of CPU clock frequency                             SFT.OFF SFT.OFF
                     SFT.ON / SFT.OFF
@@ -27,38 +27,38 @@ FT-60R Configuration
     12   DC VLT     Indicated the DC supply voltage. Only on the radio.         -       -
     13   DCS.COD    Setting the DCS code                                        023     023
                     104 std DCS codes
-    14   DCS.N/R    Selects 'Normal' or 'Inverted' DCS coding                   T/RX.N  T/RX N
+    14   DCS.N/R    Selects 'Normal' or 'Inverted' DCS coding                   T/RX.N  T/RX N      0x39    0x10 / 0x12 / 0x14 / 0x16
                     T/RX.N / RX.R / TX.R / T/RX.R
-    15   DT DLY     Setting of the DTMF Autodialer Delay Time                   450ms   450ms
+    15   DT DLY     Setting of the DTMF Autodialer Delay Time                   450ms   450ms       0x2C    0x00 / 0x01 / 0x02  /0x03 / 0x04 / 0x05
                     50ms / 100ms / 250ms / 450ms / 750ms / 1000ms
-    16   DT SPD     Setting of the DTMF autodialer sending speed                50ms    50ms
+    16   DT SPD     Setting of the DTMF autodialer sending speed                50ms    50ms        0x2D    0x00 / 0x01
                     50ms / 100ms
     17   DT WRT     Programming of the DTMF Autodialer Memories                 -
-                                                                                d-1
-                                                                                d-2
-                                                                                d-3
-                                                                                d-4
-                                                                                d-5
-                                                                                d-6
-                                                                                d-7
-                                                                                d-8
-                                                                                d-9
-    18   EAI        Enables/disables the emergency automatic ID (EAI) feature   OFF     OFF
+                                                                                d-1                 0xC8-0xD7
+                                                                                d-2                 0xD8
+                                                                                d-3                 0xE8
+                                                                                d-4                 0xF8
+                                                                                d-5                 0x108
+                                                                                d-6                 0x118
+                                                                                d-7                 0x128
+                                                                                d-8                 0x138
+                                                                                d-9                 0x148
+    18   EAI        Enables/disables the emergency automatic ID (EAI) feature   OFF     OFF         0x37    0x01-0x0F/ 0x11-0x1F/ 0x00
                     INT 1-50M / CON 1-50M / OFF
     19   EDG.BEP    Enables/disables the Band-edge beeper                       BEP.OFF BEP.OFF
                     BEP.ON / BEP.OFF
-    20   EMG S      Selects which emergency alarms sound                        EMG.B+L EMG.B+L
+    20   EMG S      Selects which emergency alarms sound                        EMG.B+L EMG.B+L     0x36    0x01 / 0x02 / 0x03 / 0x04 / 0x05/ 0x06 / 0x07 / 0x00
                     EMG.BEP / EMG.LMP / EMG.B+L / EMG.CWT / EMD.C+B / EMG.C+L / EMG.ALL / OFF
 
-    21   INET       Selects the Internet Connection mode                        INT.OFF
+    21   INET       Selects the Internet Connection mode                        INT.OFF             0x3A    0x2C/ 0x2E / 0x28
                     INT.COD (Wires) / INT.MEM (Other) / INT.OFF
-    22   INT CD     Selects the Access Number (DTMF digit) for WIRES operation  CODE 1  CODE 1
+    22   INT CD     Selects the Access Number (DTMF digit) for WIRES operation  CODE 1  CODE 1      0x29    0x09 - 0x0F
                     CODE 0-9 A B C D E F
-    23   INT MR     Selects the Access Number (DTMF code) for non-WIRES         d-1     d-9
+    23   INT MR     Selects the Access Number (DTMF code) for non-WIRES         d-1     d-9         0x2A    0x00-0x08
                     Internet Link System access / d-1 to d-9
-    24   LAMP       Selects the LCD/Keypad lamp mode                            KEY     KEY
+    24   LAMP       Selects the LCD/Keypad lamp mode                            KEY     KEY         0x2F    0x00 / 0x01 / 0x02
                     KEY / 5SEC / TOGGLE
-    25   LOCK       Selects the Control Locking lockout combination             LK K+D  LK PTT
+    25   LOCK       Selects the Control Locking lockout combination             LK K+D  LK PTT      0x2B    0x01 / 0x02 / 0x03 / 0x04 / 0x05 / 0x06 / 0x07
                     LK KEY / LK DIAL / LK K+D / LK PTT / LK P+K / LK P+D / LK ALL
     26   MONI       Selects the MONI switch function                            T-CALL  MONI
                     MONI / T-CALL
@@ -68,44 +68,44 @@ FT-60R Configuration
                     Setting is done with the rig for individual memories
     29   PAGER      Enable/disable the enhanced CTCSS paging and code squelch   -       -
                     Turns off when rig powered on
-    30   PAG.ABK    Enable/disable the answer back function of the enhanced     ABK.OFF ABK.OFF
+    30   PAG.ABK    Enable/disable the answer back function of the enhanced     ABK.OFF ABK.OFF     0x3C    0x29 / 0x29
                     CTCSS paging and code squelch / ABK.OFF / ABK.ON
     31   PAG.CDR    Setting the receiver pager code for the enhanced CTCSS      05 47
                     paging and code squelch / Code1 Code2
-                                                                                Code 1  05
-                                                                                Code 2  47
+                                                                                Code 1  05          0x32    0x00 - 0x31 val - 1
+                                                                                Code 2  47          0x33    0x00 - 0x31 val - 1
     32   PAG.CDT    Setting the transmitter pager code for the enhanced CTCSS   05 47
                     paging and code squelch / Code1 Code2
-                                                                                Code 1  05
-                                                                                Code 2  47
+                                                                                Code 1  05          0x34    0x00 - 0x31 val - 1
+                                                                                Code 2  47          0x35    0x00 - 0x31 val - 1
     33   PSWD       Enables/disables the password feature.                      -       -
                     Must be done on the radio
-    34   PSWD W     Stores the password.                                        -       -
-    35   RESUME     Selects the Scan-Resume mode                                BUSY    BUSY
+    34   PSWD W     Stores the password.                                        -       -           0x21e-0x221    BCD
+    35   RESUME     Selects the Scan-Resume mode                                BUSY    BUSY        0x3C    0x20 / 0x28 / 0x24
                     TIME / BUSY / HOLD
-    36   REV/HM     Selects the function of the (HM/RV) key                     <REV>   <HOME>
+    36   REV/HM     Selects the function of the (HM/RV) key                     <REV>   <HOME>      0x3c    0x08 / 0x28
                     <REV> / <HOME>
-    37   RF SQL     Adjust the RF SQL threshold level                           OFF     OFF
+    37   RF SQL     Adjust the RF SQL threshold level                           OFF     OFF         0x28    0x00-0x08?
                     OFF / S-1 ~ S-8 / S-FULL
     38   RPT.MOD    Sets the Repeater Shift Direction                           RPT.OFF RPT.OFF
                     RPT.OFF / RPT.- / RPT.+
-    39   PRI.RVT    Enables/Disables the Priority Revert feature                RVT.OFF RVT.OFF
+    39   PRI.RVT    Enables/Disables the Priority Revert feature                RVT.OFF RVT.OFF     0x3A    0xA8 / 0x28
                     RVT.ON / RVT.OFF
     40   RX MOD     Selects the receiving mode. AUTO means AM in 108-137MHz     AUTO    AUTO
                     and 300-320MHz, FM elsewhere / AUTO / FM / AM
-    41   RXSAVE     Selects the receive-mode battery saver interval             200ms   200ms
+    41   RXSAVE     Selects the receive-mode battery saver interval             200ms   200ms       0x31    0x01- 0x05 / 0x00
                     (sleep ratio) / 200ms / 300ms / 500ms / 1sec / 2sec / OFF
-    42   S SRCH     Selects the Smart Search Sweep mode                         SINGLE  CONT
+    42   S SRCH     Selects the Smart Search Sweep mode                         SINGLE  CONT        0x39    0x10 / 0x11
                     SINGLE / CONT
-    43   SCN MD     Selects the Memory Scan channel-selection mode              MEM     MEM
+    43   SCN MD     Selects the Memory Scan channel-selection mode              MEM     MEM         0x3B    0x00 / 0x04
                     MEM / ONLY
-    44   SCN LMP    Enables/disables the scan lamp while paused                 ON      ON
+    44   SCN LMP    Enables/disables the scan lamp while paused                 ON      ON          0x3D    0x49 / 0x09
                     ON / OFF
     45   SHIFT      Sets the magnitude of the Repeater Shift                    varies  0.60
                     0.00 - 99.50 MHz
     46   SKIP       Selects what action will happen on a 'flagged' Memory       N/A     N/A
                     Channel / Memory channels only
-    47   SPLIT      Enables/disables split CTCSS/DCS coding                     SPL.OFF SPL.OFF
+    47   SPLIT      Enables/disables split CTCSS/DCS coding                     SPL.OFF SPL.OFF     0x3A    0x28 / 0x68
                     SPL.OFF / SPL.ON
     48   SQL.TYP    Selects the Tone Encoder and/or Decoder mode                OFF     OFF
                     OFF / TONE / TSQL / REV TN / DCS / D / T DCS / D TSQL
@@ -113,19 +113,19 @@ FT-60R Configuration
                     5k / 10k / 12.5k / 15k / 20k / 25k / 50k / 100k / AUTO
     50   TN FRQ     Sets the CTCSS Tone Frequency                               100Hz   100.0
                     50 standard CTCSS tones
-    51   TOT        Sets the Time-Out Timer                                     6mins   1mins
+    51   TOT        Sets the Time-Out Timer                                     6mins   1mins       0x25   0x01 - 0x1e/ 0x00
                     1-30mins / OFF
-    52   TX.LED     Enables/disables the TX LED while transmitting              LED.ON  LED.ON
+    52   TX.LED     Enables/disables the TX LED while transmitting              LED.ON  LED.ON      0x3D   0x49 / 0x4D
                     LED.ON / LED.OFF
-    53   TXSAVE     Enables/disables the transmitter battery saver              SAV.OFF SAV.OFF
+    53   TXSAVE     Enables/disables the transmitter battery saver              SAV.OFF SAV.OFF     0x3C   0x28 / 0x2A
                     SAV.OFF / SAV.ON
-    54   VFO.BND    Selects or disables the VFO band edge limiting for          BAND    BAND
+    54   VFO.BND    Selects or disables the VFO band edge limiting for          BAND    BAND        0x39   0x10 / 0x18
                     the current band / BAND / ALL
     55   WID.NAR    Select wide (5kHz) or narrow (2.5kHz) TX deviation          WIDE    WIDE
                     WIDE / NARROW
-    56   WX ALT     Enables/disables the Weather Alert Scan                     ALT.OFF ALT.OFF
+    56   WX ALT     Enables/disables the Weather Alert Scan                     ALT.OFF ALT.OFF     0x38   0x81 / 0x01
                     ALT.ON / ALT.OFF
-    57   [7(P1)]    Defines the setting of the [7(P1)] button                   29 PAGER 29 PAGER
+    57   [7(P1)]    Defines the setting of the [7(P1)] button                   29 PAGER 29 PAGER   0x26
                     one of 52 settings
-    58   [8(P2)]    Defines the setting of the [8(P2)] button                   46 SKIP 46 SKIP
+    58   [8(P2)]    Defines the setting of the [8(P2)] button                   46 SKIP 46 SKIP     0x27
                     one of 52 settings

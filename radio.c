@@ -162,7 +162,7 @@ void radio_save_image(char *filename)
     FILE *img;
 
     fprintf(stderr, "Write image to file '%s'.\n", filename);
-    img = fopen(filename, "w");
+    img = fopen(filename, "wb");
     if (! img) {
         perror(filename);
         exit(-1);
